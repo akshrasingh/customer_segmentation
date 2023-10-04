@@ -1,5 +1,5 @@
 # R DATA SCIENCE PROJECT -CUSTOMER SEGMENTATION 
-
+#hi akshra akshat heree
 customer_data=read.csv("C:/Users/Akshra_/Downloads/Mall_Customers.csv")
 #the structure of the dataframe
 str(customer_data)
