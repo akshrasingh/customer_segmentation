@@ -1,6 +1,4 @@
 # R DATA SCIENCE PROJECT -CUSTOMER SEGMENTATION 
-#hi akshra akshat heree
-#lets kiss in lift
 customer_data=read.csv("C:/Users/Akshra_/Downloads/Mall_Customers.csv")
 #the structure of the dataframe
 str(customer_data)
@@ -102,4 +100,59 @@ hist(customer_data$Spending.Score..1.100.,
      labels=TRUE)
 #ml part
 
+library(purrr)
+install.packages("ggplot")
+set.seed(123)
+# function to calculate total intra-cluster sum of square 
+iss <- function(k) {
+  kmeans(customer_data[,3:5],k,iter.max=100,nstart=100,algorithm="Lloyd" )$tot.withinss
+}
 
+k.values <- 1:10
+
+
+iss_values <- map_dbl(k.values, iss)
+
+plot(k.values, iss_values,
+     type="b", pch = 19, frame = FALSE, 
+     xlab="Number of clusters K",
+     ylab="Total intra-clusters sum of squares",col="red")
+
+k6<-kmeans(customer_data[,3:5],6,iter.max=100,nstart=50,algorithm="Lloyd")
+k6
+
+pcclust=prcomp(customer_data[,3:5],scale=FALSE) #principal component analysis
+summary(pcclust)
+library(ggplot2)
+pcclust$rotation[,1:2]
+set.seed(1)
+ggplot(customer_data, aes(x =Annual.Income..k.., y = Spending.Score..1.100.)) + 
+  geom_point(stat = "identity", aes(color = as.factor(k6$cluster))) +
+  scale_color_discrete(name=" ",
+                       breaks=c("1", "2", "3", "4", "5","6"),
+                       labels=c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5","Cluster 6")) +
+  ggtitle("Segments of Mall Customers", subtitle = "Using K-means Clustering")
+
+
+
+
+
+ggplot(customer_data, aes(x =Spending.Score..1.100., y =Age)) + 
+  geom_point(stat = "identity", aes(color = as.factor(k6$cluster))) +
+  scale_color_discrete(name=" ",
+                       breaks=c("1", "2", "3", "4", "5","6"),
+                       labels=c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5","Cluster 6")) +
+  ggtitle("Segments of Mall Customers", subtitle = "Using K-means Clustering")
+
+
+
+
+
+
+kCols=function(vec){cols=rainbow (length (unique (vec)))
+return (cols[as.numeric(as.factor(vec))])}
+
+digCluster<-k6$cluster; dignm<-as.character(digCluster); # K-means clusters
+
+plot(pcclust$x[,1:2], col =kCols(digCluster),pch =19,xlab ="K-means",ylab="classes")
+legend("bottomleft",unique(dignm),fill=unique(kCols(digCluster)))
