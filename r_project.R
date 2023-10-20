@@ -202,10 +202,6 @@ ggplot(customer_data, aes(x =Spending.Score..1.100., y =Age)) +
   ggtitle("Segments of Mall Customers", subtitle = "Using K-means Clustering")
 
 
-
-
-
-
 kCols=function(vec){cols=rainbow (length (unique (vec)))
 return (cols[as.numeric(as.factor(vec))])}
 
@@ -213,3 +209,25 @@ digCluster<-k6$cluster; dignm<-as.character(digCluster); # K-means clusters
 
 plot(pcclust$x[,1:2], col =kCols(digCluster),pch =19,xlab ="K-means",ylab="classes")
 legend("bottomleft",unique(dignm),fill=unique(kCols(digCluster)))
+
+
+# Calculate Entropy and Impurity
+# Calculate Entropy
+entropy <- function(labels) {
+  probabilities <- table(labels) / length(labels)
+  -sum(probabilities * log2(probabilities))
+}
+
+# Calculate Impurity (Gini Index)
+impurity <- function(labels) {
+  probabilities <- table(labels) / length(labels)
+  1 - sum(probabilities^2)
+}
+
+# Assuming 'k6$cluster' represents the cluster assignments
+entropy_value <- entropy(k6$cluster)
+impurity_value <- impurity(k6$cluster)
+
+# Display Entropy and Impurity
+cat("Entropy of the data: ", entropy_value, "\n")
+cat("Impurity of the data: ", impurity_value, "\n")
